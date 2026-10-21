@@ -400,6 +400,14 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>(
       }
 
       if (event.key === 'Tab') {
+        const origin = document.activeElement;
+        if (!(origin instanceof Node) || !container.contains(origin)) {
+          // A Tab that starts outside the trap belongs to the page. Only Tabs
+          // that start inside (or on) the container are contained; otherwise
+          // an open non-modal layer would capture every Tab on the page.
+          return;
+        }
+
         // Mark that keyboard navigation is happening
         isKeyboardNavigationRef.current = true;
 
